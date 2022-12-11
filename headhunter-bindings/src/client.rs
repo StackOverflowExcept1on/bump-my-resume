@@ -27,7 +27,7 @@ impl<'a> Client<'a> {
     }
 
     #[inline]
-    fn build_url_with_param<Req: Request, T: Display>(value: T) -> Result<String> {
+    fn build_url_with_value<Req: Request, T: Display>(value: T) -> Result<String> {
         let req = Req::build_url(value).ok_or_else(|| Error::UrlBuild)?;
         Ok(format!("{url}/{req}", url = Self::BASE_URL))
     }
@@ -78,7 +78,7 @@ impl<'a> Client<'a> {
         req: &Req,
         value: T,
     ) -> Result<Req::Response> {
-        let url = Self::build_url_with_param::<Req, _>(value)?;
+        let url = Self::build_url_with_value::<Req, _>(value)?;
         self.request(reqwest::Method::POST, url, req).await
     }
 }
