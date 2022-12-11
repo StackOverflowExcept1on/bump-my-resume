@@ -49,7 +49,7 @@ async fn auth(
     }: SubCommandAuth,
 ) -> color_eyre::eyre::Result<()> {
     #[rustfmt::skip]
-        let client = AuthenticationClient::new(
+    let client = AuthenticationClient::new(
         ApplicationCredentials { client_id, client_secret },
         UserCredentials { login, password },
     );
