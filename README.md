@@ -41,3 +41,9 @@ cat response.json
 # you can now use the CLI to update the latest date on your resume
 ./target/release/headhunter-cli bump
 ```
+
+### Configuration on server
+
+1. put `response.json` and `./target/release/headhunter-cli` to the same directory, e.g. to `/root/bump-my-resume`
+2. run `crontab -e`
+3. append it with line like this: `0 */1 * * * cd /root/bump-my-resume && ./target/release/headhunter-cli bump`
