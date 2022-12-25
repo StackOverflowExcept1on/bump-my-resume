@@ -48,17 +48,22 @@ async fn auth(
         ref password,
     }: SubCommandAuth,
 ) -> color_eyre::eyre::Result<()> {
-    #[rustfmt::skip]
-    let client = AuthenticationClient::new(
-        ApplicationCredentials { client_id, client_secret },
-        UserCredentials { login, password },
-    );
+    let client = AuthenticationClient::new();
+
+    let application = ApplicationCredentials {
+        client_id,
+        client_secret,
+    };
+
+    let user = UserCredentials { login, password };
 
     println!("Trying to get authorization_code using the Selenium WebDriver...");
-    let authorization_code = client.get_authorization_code().await?;
+    let authorization_code = client.get_authorization_code(&application, &user).await?;
 
     println!("Trying to get perform authentication...");
-    let response = client.perform_authentication(&authorization_code).await?;
+    let response = client
+        .perform_authentication(&application, &authorization_code)
+        .await?;
 
     println!("Saving data into {RESPONSE_FILENAME}...");
     serde_json::to_writer(&File::create(RESPONSE_FILENAME)?, &response)?;
@@ -68,17 +73,41 @@ async fn auth(
     Ok(())
 }
 
-async fn bump() -> color_eyre::eyre::Result<()> {
+async fn prepare_client<'a>() -> color_eyre::eyre::Result<Client> {
     let UserOpenAuthorizationResponse {
-        ref access_token, ..
+        access_token,
+        ref refresh_token,
+        ..
     } = serde_json::from_reader(File::open(RESPONSE_FILENAME)?)?;
 
     let client = Client::new(access_token)?;
 
+    return match client.get(&MeRequest).await {
+        Ok(_) => {
+            println!("Using existing token...");
+            Ok(client)
+        }
+        Err(_) => {
+            println!("Looks like the token has expired, refreshing...");
+
+            let authentication_client = AuthenticationClient::new();
+            let response = authentication_client.refresh_token(refresh_token).await?;
+
+            println!("Saving new token into {RESPONSE_FILENAME}...");
+            serde_json::to_writer(&File::create(RESPONSE_FILENAME)?, &response)?;
+
+            println!("{response:#?}");
+
+            Ok(Client::new(response.access_token)?)
+        }
+    };
+}
+
+async fn bump() -> color_eyre::eyre::Result<()> {
+    let client = prepare_client().await?;
+
     let response = client.get(&MeRequest).await?;
     println!("Logged as {} with {}", response.auth_type, response.email);
-
-    //TODO: refresh_token
 
     let response = client.get(&MineResumesRequest).await?;
     println!("Found {} resumes", response.found);

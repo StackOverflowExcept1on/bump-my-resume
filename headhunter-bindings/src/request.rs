@@ -44,6 +44,20 @@ impl<'a> Request for UserOpenAuthorizationRequest<'a> {
 }
 
 #[derive(Debug, Serialize)]
+pub struct UserRenewOpenAuthorizationRequest<'a> {
+    pub grant_type: &'a str,
+    pub refresh_token: &'a str,
+}
+
+impl<'a> Request for UserRenewOpenAuthorizationRequest<'a> {
+    type Response = super::response::UserOpenAuthorizationResponse;
+
+    fn method() -> Option<&'static str> {
+        Some("oauth/token")
+    }
+}
+
+#[derive(Debug, Serialize)]
 pub struct MeRequest;
 
 impl Request for MeRequest {

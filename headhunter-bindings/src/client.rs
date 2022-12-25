@@ -2,16 +2,16 @@ use super::{request::*, response::*, Error, Result};
 
 use std::fmt::Display;
 
-pub struct Client<'a> {
-    access_token: &'a str,
+pub struct Client {
+    access_token: String,
     reusable_client: reqwest::Client,
 }
 
-impl<'a> Client<'a> {
+impl Client {
     const USER_AGENT: &'static str = "App/1.0 (hidden@gmail.com)";
     const BASE_URL: &'static str = "https://api.hh.ru";
 
-    pub fn new(access_token: &'a str) -> Result<Self> {
+    pub fn new(access_token: String) -> Result<Self> {
         Ok(Self {
             access_token,
             reusable_client: reqwest::ClientBuilder::new()
@@ -42,7 +42,7 @@ impl<'a> Client<'a> {
             .reusable_client
             .request(method, url)
             .json(req)
-            .bearer_auth(self.access_token)
+            .bearer_auth(&self.access_token)
             .send()
             .await?;
 

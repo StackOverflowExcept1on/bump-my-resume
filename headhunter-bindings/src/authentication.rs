@@ -15,25 +15,27 @@ pub struct UserCredentials<'a> {
     pub password: &'a str,
 }
 
-pub struct AuthenticationClient<'a> {
-    application: ApplicationCredentials<'a>,
-    user: UserCredentials<'a>,
-}
+pub struct AuthenticationClient;
 
-impl<'a> AuthenticationClient<'a> {
+impl AuthenticationClient {
     const SERVER_URL: &'static str = "http://localhost:9515";
     const BASE_URL: &'static str = "https://hh.ru";
 
-    pub fn new(application: ApplicationCredentials<'a>, user: UserCredentials<'a>) -> Self {
-        Self { application, user }
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
+        Self
     }
 
-    pub async fn get_authorization_code(&self) -> Result<String> {
+    pub async fn get_authorization_code(
+        &self,
+        application: &ApplicationCredentials<'_>,
+        user: &UserCredentials<'_>,
+    ) -> Result<String> {
         let driver = WebDriver::new(Self::SERVER_URL, DesiredCapabilities::chrome()).await?;
 
         let request = UserAuthorizationRequest {
             response_type: "code",
-            client_id: self.application.client_id,
+            client_id: application.client_id,
         };
 
         let mut url = Url::parse(Self::BASE_URL)?;
@@ -57,8 +59,8 @@ impl<'a> AuthenticationClient<'a> {
 
         let elem_button = elem_form.find(By::Css("button[type='submit']")).await?;
 
-        elem_login.send_keys(self.user.login).await?;
-        elem_password.send_keys(self.user.password).await?;
+        elem_login.send_keys(user.login).await?;
+        elem_password.send_keys(user.password).await?;
 
         elem_button.click().await?;
 
@@ -95,13 +97,25 @@ impl<'a> AuthenticationClient<'a> {
 
     pub async fn perform_authentication(
         &self,
+        application: &ApplicationCredentials<'_>,
         authorization_code: &str,
     ) -> Result<UserOpenAuthorizationResponse> {
         self.request(&UserOpenAuthorizationRequest {
             grant_type: "authorization_code",
-            client_id: self.application.client_id,
-            client_secret: self.application.client_secret,
+            client_id: application.client_id,
+            client_secret: application.client_secret,
             code: authorization_code,
+        })
+        .await
+    }
+
+    pub async fn refresh_token(
+        &self,
+        refresh_token: &str,
+    ) -> Result<UserOpenAuthorizationResponse> {
+        self.request(&UserRenewOpenAuthorizationRequest {
+            grant_type: "refresh_token",
+            refresh_token,
         })
         .await
     }
