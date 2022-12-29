@@ -42,6 +42,24 @@ cat response.json
 ./target/release/headhunter-cli bump
 ```
 
+### Building statically linked binary on Linux
+
+I found that useful for running on remote machine. You need to add some packages and musl target to do that.
+
+```bash
+# add musl-gcc command
+sudo apt install musl-tools
+
+# add linux musl target
+rustup target add x86_64-unknown-linux-musl
+
+# build statically linked binary
+RUSTFLAGS='-C target-feature=+crt-static' cargo build --release --target x86_64-unknown-linux-musl
+
+# note: it's available in bit different directory
+./target/x86_64-unknown-linux-musl/release/headhunter-cli --help
+```
+
 ### Configuration on server
 
 1. put `response.json` and `./target/release/headhunter-cli` to the same directory, e.g. to `/root/bump-my-resume`
