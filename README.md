@@ -64,4 +64,4 @@ cargo build --release --target x86_64-unknown-linux-musl
 
 1. put `response.json` and `./target/release/headhunter-cli` to the same directory, e.g. to `/root/bump-my-resume`
 2. run `crontab -e`
-3. append it with line like this: `0 */1 * * * cd /root/bump-my-resume && ./target/release/headhunter-cli bump 2>&1`
+3. append it with line like this: `0 */1 * * * cd /root/bump-my-resume && ./target/release/headhunter-cli bump >> out.txt 2>&1`
