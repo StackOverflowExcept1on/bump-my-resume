@@ -57,18 +57,18 @@ async fn auth(
 
     let user = UserCredentials { login, password };
 
-    println!("Trying to get authorization_code using the Selenium WebDriver...");
+    tracing::info!("Trying to get authorization_code using the Selenium WebDriver...");
     let authorization_code = client.get_authorization_code(&application, &user).await?;
 
-    println!("Trying to get perform authentication...");
+    tracing::info!("Trying to get perform authentication...");
     let response = client
         .perform_authentication(&application, &authorization_code)
         .await?;
 
-    println!("Saving data into {RESPONSE_FILENAME}...");
+    tracing::info!("Saving data into {RESPONSE_FILENAME}...");
     serde_json::to_writer(&File::create(RESPONSE_FILENAME)?, &response)?;
 
-    println!("{response:#?}");
+    tracing::debug!("{response:#?}");
 
     Ok(())
 }
@@ -84,19 +84,19 @@ async fn prepare_client<'a>() -> color_eyre::eyre::Result<Client> {
 
     return match client.get(&MeRequest).await {
         Ok(_) => {
-            println!("Using existing token...");
+            tracing::info!("Using existing token...");
             Ok(client)
         }
         Err(_) => {
-            println!("Looks like the token has expired, refreshing...");
+            tracing::info!("Looks like the token has expired, refreshing...");
 
             let authentication_client = AuthenticationClient::new();
             let response = authentication_client.refresh_token(refresh_token).await?;
 
-            println!("Saving new token into {RESPONSE_FILENAME}...");
+            tracing::info!("Saving new token into {RESPONSE_FILENAME}...");
             serde_json::to_writer(&File::create(RESPONSE_FILENAME)?, &response)?;
 
-            println!("{response:#?}");
+            tracing::debug!("{response:#?}");
 
             Ok(Client::new(response.access_token)?)
         }
@@ -107,10 +107,10 @@ async fn bump() -> color_eyre::eyre::Result<()> {
     let client = prepare_client().await?;
 
     let response = client.get(&MeRequest).await?;
-    println!("Logged as {} with {}", response.auth_type, response.email);
+    tracing::info!("Logged as {} with {}", response.auth_type, response.email);
 
     let response = client.get(&MineResumesRequest).await?;
-    println!("Found {} resumes", response.found);
+    tracing::info!("Found {} resumes", response.found);
 
     for item in response.items {
         let url = url::Url::parse(&item.alternate_url)?;
@@ -120,14 +120,14 @@ async fn bump() -> color_eyre::eyre::Result<()> {
             .nth(1)
             .expect("failed to get resume ID");
 
-        println!("Processing resume with id {resume_id}");
+        tracing::info!("Processing resume with id {resume_id}");
 
         let ret = client
             .post_with_value(&PublishResumeRequest, resume_id)
             .await;
 
         if let Err(err) = ret {
-            println!("{err:#?}")
+            tracing::error!("{err:#?}")
         }
     }
 
@@ -139,6 +139,16 @@ async fn main() -> color_eyre::eyre::Result<()> {
     let args: Args = argh::from_env();
 
     color_eyre::install()?;
+
+    tracing_subscriber::fmt()
+        .with_timer(tracing_subscriber::fmt::time::OffsetTime::new(
+            time::UtcOffset::current_local_offset().unwrap_or(time::UtcOffset::UTC),
+            time::macros::format_description!(
+                "[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"
+            ),
+        ))
+        .with_env_filter("headhunter_cli=trace")
+        .init();
 
     match args.command {
         MySubCommandEnum::Auth(args) => auth(args).await,

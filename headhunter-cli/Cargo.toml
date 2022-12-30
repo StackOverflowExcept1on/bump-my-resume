@@ -6,6 +6,9 @@ edition = "2021"
 [dependencies]
 argh = "0.1.9"
 color-eyre = "0.6.2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["time", "env-filter"] }
+time = { version = "0.3", features = ["local-offset"] }
 serde_json = "1.0"
 tokio = { version = "1", features = ["full"] }
 url = "2.3.1"
