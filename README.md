@@ -54,7 +54,7 @@ sudo apt install musl-tools
 rustup target add x86_64-unknown-linux-musl
 
 # build statically linked binary
-RUSTFLAGS='-C target-feature=+crt-static' cargo build --release --target x86_64-unknown-linux-musl
+cargo build --release --target x86_64-unknown-linux-musl
 
 # note: it's available in bit different directory
 ./target/x86_64-unknown-linux-musl/release/headhunter-cli --help
