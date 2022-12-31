@@ -2,6 +2,7 @@ use super::{request::*, response::*, Error, Result};
 
 use std::fmt::Display;
 
+/// Provides access to Headhunter's API using the user-defined `Request` and `Response` structures
 pub struct Client {
     access_token: String,
     reusable_client: reqwest::Client,
@@ -11,6 +12,7 @@ impl Client {
     const USER_AGENT: &'static str = "App/1.0 (hidden@gmail.com)";
     const BASE_URL: &'static str = "https://api.hh.ru";
 
+    /// Creates new `Client` instance with `access_token` (token doesn't checked)
     pub fn new(access_token: String) -> Result<Self> {
         Ok(Self {
             access_token,
@@ -68,11 +70,13 @@ impl Client {
         }
     }
 
+    /// Interacts with API using the GET method, you need to pass `&Request` structure
     pub async fn get<Req: Request>(&self, req: &Req) -> Result<Req::Response> {
         let url = Self::build_url::<Req>()?;
         self.request(reqwest::Method::GET, url, req).await
     }
 
+    /// Interacts with API using the POST method, you need to pass `&Request` structure and `value`
     pub async fn post_with_value<Req: Request, T: Display>(
         &self,
         req: &Req,

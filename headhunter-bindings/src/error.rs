@@ -1,5 +1,7 @@
+/// Custom Result type with two generic parameters for user convenience
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
+/// Describes possible errors that might happen while using this library
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("Serde json error: {0}")]

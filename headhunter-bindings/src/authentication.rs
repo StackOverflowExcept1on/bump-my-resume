@@ -5,27 +5,33 @@ use url::Url;
 
 use super::{request::*, response::*, Error, Result};
 
+/// Represents the application's credentials, which can be obtained from https://dev.hh.ru
 pub struct ApplicationCredentials<'a> {
     pub client_id: &'a str,
     pub client_secret: &'a str,
 }
 
+/// Represents user credentials for the http://hh.ru website
 pub struct UserCredentials<'a> {
     pub login: &'a str,
     pub password: &'a str,
 }
 
+/// Helper structure for obtaining token using authorization
+/// through credentials in Selenium - browser automation software
 pub struct AuthenticationClient;
 
 impl AuthenticationClient {
     const SERVER_URL: &'static str = "http://localhost:9515";
     const BASE_URL: &'static str = "https://hh.ru";
 
+    /// Creates new `AuthenticationClient`
     #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self
     }
 
+    /// Enters application and user data through Selenium to get temporary code
     pub async fn get_authorization_code(
         &self,
         application: &ApplicationCredentials<'_>,
@@ -95,6 +101,7 @@ impl AuthenticationClient {
         Ok(response)
     }
 
+    /// Continues the authorization process, receives access token from the temporary code
     pub async fn perform_authentication(
         &self,
         application: &ApplicationCredentials<'_>,
@@ -109,6 +116,7 @@ impl AuthenticationClient {
         .await
     }
 
+    /// Creates an access token renewal request
     pub async fn refresh_token(
         &self,
         refresh_token: &str,
