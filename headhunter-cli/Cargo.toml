@@ -1,7 +1,13 @@
 [package]
 name = "headhunter-cli"
 version = "0.1.0"
+authors = ["StackOverflowExcept1on"]
 edition = "2021"
+description = " Tool for Headhunter (https://hh.ru) that can automatically update resumes"
+repository = "https://github.com/StackOverflowExcept1on/bump-my-resume"
+license = "MIT"
+keywords = ["headhunter", "hh", "hh.ru"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 argh = "0.1.9"
