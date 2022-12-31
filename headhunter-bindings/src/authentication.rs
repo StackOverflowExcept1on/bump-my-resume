@@ -85,7 +85,7 @@ impl AuthenticationClient {
         Ok(code)
     }
 
-    pub async fn request<Req: Request>(&self, req: &Req) -> Result<Req::Response> {
+    async fn request<Req: Request>(&self, req: &Req) -> Result<Req::Response> {
         let mut url = Url::parse(Self::BASE_URL)?;
         url.set_path(Req::method().ok_or_else(|| Error::UrlBuild)?);
 
