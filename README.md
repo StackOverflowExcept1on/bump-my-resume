@@ -1,6 +1,8 @@
 ### bump-my-resume
 
 [![Build Status](https://github.com/StackOverflowExcept1on/bump-my-resume/workflows/CI/badge.svg)](https://github.com/StackOverflowExcept1on/bump-my-resume/actions)
+[![Latest Version](https://img.shields.io/crates/v/bump-my-resume.svg)](https://crates.io/crates/bump-my-resume)
+[![Documentation](https://docs.rs/bump-my-resume/badge.svg)](https://docs.rs/bump-my-resume/)
 
 Tool for Headhunter that can automatically update resumes
 
