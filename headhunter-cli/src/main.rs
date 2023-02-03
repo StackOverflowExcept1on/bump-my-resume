@@ -82,7 +82,7 @@ async fn prepare_client<'a>() -> color_eyre::eyre::Result<Client> {
 
     let client = Client::new(access_token)?;
 
-    return match client.get(&MeRequest).await {
+    match client.get(&MeRequest).await {
         Ok(_) => {
             tracing::info!("Using existing token...");
             Ok(client)
@@ -100,7 +100,7 @@ async fn prepare_client<'a>() -> color_eyre::eyre::Result<Client> {
 
             Ok(Client::new(response.access_token)?)
         }
-    };
+    }
 }
 
 async fn bump() -> color_eyre::eyre::Result<()> {
