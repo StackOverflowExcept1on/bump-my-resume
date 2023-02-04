@@ -18,4 +18,4 @@ time = { version = "0.3", features = ["local-offset"] }
 serde_json = "1.0"
 tokio = { version = "1", features = ["full"] }
 url = "2.3.1"
-headhunter-bindings = { path = "../headhunter-bindings" }
+headhunter-bindings = { version = "0.1.0", path = "../headhunter-bindings" }
