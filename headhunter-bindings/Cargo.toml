@@ -6,7 +6,7 @@ edition = "2021"
 description = "Rust bindings to the Headhunter API (https://hh.ru)"
 repository = "https://github.com/StackOverflowExcept1on/bump-my-resume"
 license = "MIT"
-keywords = ["headhunter", "hh", "hh.ru"]
+keywords = ["headhunter", "hh", "hh-ru"]
 categories = ["api-bindings"]
 
 [dependencies]
