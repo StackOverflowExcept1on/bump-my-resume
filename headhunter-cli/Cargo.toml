@@ -1,21 +1,21 @@
 [package]
 name = "headhunter-cli"
-version = "0.1.0"
-authors = ["StackOverflowExcept1on"]
-edition = "2021"
-description = " Tool for Headhunter (https://hh.ru) that can automatically update resumes"
-repository = "https://github.com/StackOverflowExcept1on/bump-my-resume"
-license = "MIT"
-keywords = ["headhunter", "hh", "hh-ru"]
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "Tool for Headhunter (https://hh.ru) that can automatically update resumes"
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
 categories = ["command-line-utilities"]
 
 [dependencies]
-argh = "0.1.9"
-color-eyre = "0.6.2"
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["time", "env-filter"] }
-time = { version = "0.3", features = ["local-offset"] }
-serde_json = "1.0"
-tokio = { version = "1", features = ["full"] }
-url = "2.3.1"
-headhunter-bindings = { version = "0.1.0", path = "../headhunter-bindings" }
+argh.workspace = true
+color-eyre.workspace = true
+headhunter-bindings.workspace = true
+serde_json.workspace = true
+time.workspace = true
+tokio.workspace = true
+tracing-subscriber.workspace = true
+tracing.workspace = true
+url.workspace = true

@@ -1,4 +1,4 @@
-use super::{request::*, response::*, Error, Result};
+use super::{Error, Result, request::*, response::*};
 
 use std::fmt::Display;
 
@@ -13,6 +13,7 @@ impl Client {
     const BASE_URL: &'static str = "https://api.hh.ru";
 
     /// Creates new `Client` instance with `access_token` (token doesn't checked)
+    #[allow(clippy::result_large_err)]
     pub fn new(access_token: String) -> Result<Self> {
         Ok(Self {
             access_token,
@@ -23,12 +24,14 @@ impl Client {
     }
 
     #[inline]
+    #[allow(clippy::result_large_err)]
     fn build_url<Req: Request>() -> Result<String> {
         let req = Req::method().ok_or_else(|| Error::UrlBuild)?;
         Ok(format!("{url}/{req}", url = Self::BASE_URL))
     }
 
     #[inline]
+    #[allow(clippy::result_large_err)]
     fn build_url_with_value<Req: Request, T: Display>(value: T) -> Result<String> {
         let req = Req::build_url(value).ok_or_else(|| Error::UrlBuild)?;
         Ok(format!("{url}/{req}", url = Self::BASE_URL))

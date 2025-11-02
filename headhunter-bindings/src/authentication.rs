@@ -3,7 +3,7 @@ use std::time::Duration;
 use thirtyfour::{By, DesiredCapabilities, WebDriver};
 use url::Url;
 
-use super::{request::*, response::*, Error, Result};
+use super::{Error, Result, request::*, response::*};
 
 /// Represents the application's credentials, which can be obtained from https://dev.hh.ru
 pub struct ApplicationCredentials<'a> {
@@ -55,6 +55,12 @@ impl AuthenticationClient {
         let elem_form = driver
             .find(By::XPath("//*[@data-qa='account-login-form']"))
             .await?;
+
+        let elem_expand_login_by_password = elem_form
+            .find(By::XPath("//*[@data-qa='expand-login-by_password']"))
+            .await?;
+
+        elem_expand_login_by_password.click().await?;
 
         let elem_login = elem_form
             .find(By::XPath("//*[@data-qa='login-input-username']"))

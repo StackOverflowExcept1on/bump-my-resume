@@ -26,7 +26,7 @@ tool will simulate activity on a job search website and keep your resume on top.
 
 ```bash
 # run ChromeDriver on the another thread (it should use port 9515)
-chromedriver &
+chromedriver --port=9515 &
 
 # pass authorization, this requires a ChromeDriver
 cargo build --release

@@ -1,4 +1,4 @@
-use headhunter_bindings::{authentication::*, request::*, response::*, Client};
+use headhunter_bindings::{Client, authentication::*, request::*, response::*};
 use std::fs::File;
 
 #[derive(argh::FromArgs)]
@@ -73,7 +73,7 @@ async fn auth(
     Ok(())
 }
 
-async fn prepare_client<'a>() -> color_eyre::eyre::Result<Client> {
+async fn prepare_client() -> color_eyre::eyre::Result<Client> {
     let UserOpenAuthorizationResponse {
         access_token,
         ref refresh_token,

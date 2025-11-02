@@ -1,4 +1,4 @@
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{Serialize, de::DeserializeOwned};
 use std::fmt::Display;
 
 /// Trait for convenient work with different types of requests and simultaneous connection
@@ -12,7 +12,7 @@ pub trait Request: Serialize {
         None
     }
 
-    /// Builds an url with parameter for POST, PUT, DELETE requests
+    /// Builds a url with parameter for POST, PUT, DELETE requests
     fn build_url<T: Display>(_: T) -> Option<String> {
         None
     }
